@@ -2,9 +2,9 @@
 name = "homework20-1"
 version = "0.1.0"
 description = ""
-authors = ["Your Name <you@example.com>"]
+authors = ["Alexandr Sinev <sir.sineow@yandex.ru>"]
 readme = "README.md"
-packages = [{include = "homework20"}]
+
 
 [tool.poetry.dependencies]
 python = "^3.12"
@@ -12,6 +12,7 @@ django = "^5.0.4"
 psycopg2-binary = "^2.9.9"
 pillow = "^10.3.0"
 ipython = "^8.23.0"
+pytils = "^0.4.1"
 
 
 [build-system]
