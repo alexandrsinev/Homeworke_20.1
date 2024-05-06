@@ -47,6 +47,9 @@ class ArticlesUpdateView(UpdateView):
     fields = ('title', 'contents', 'preview',)
     success_url = reverse_lazy('blog:list')
 
+    def get_success_url(self):
+        return reverse('blog:blog_detail', args=[self.kwargs.get('pk')])
+
 
 # Контроллер для удаления статьи
 class ArticlesDeleteView(DeleteView):
