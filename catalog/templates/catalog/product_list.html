@@ -1,14 +1,23 @@
 {% extends 'catalog/base.html' %}
 {% load my_tags %}
 {% block content %}
+
 <div class="container">
+    <div class="col-4 mb-5">
+        <div class="card mb-4 box-shadow">
+            <a class="btn btn-outline-primary" href="{% url 'catalog:product_create' %}">Добавить продукт</a>
+        </div>
+    </div>
     <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
         <h1 class="display-4">Доставка продуктов</h1>
         <p class="lead">Еда приходит сама</p>
+
+
     </div>
 
 
     <div class="row text-center">
+
         {% for object in object_list %}
         <div class="col-3">
             <div class="card mb-4 box-shadow">
@@ -16,12 +25,19 @@
                     <h4 class="my-0 font-weight-normal">{{ object.name }}</h4>
                 </div>
 
-                    <img src="{{ object.photo | media_filter }}">
+                <img src="{{ object.photo | media_filter }}">
 
 
                 <div class="card-body">
+{% if object.version %}
+<h3 class="card-title pricing-card-title">{{ object.version }}</h3>
+                    {% else %}
+                    <h3 class="my-0 font-weight-normal mb-3">Отсутствует</h3>
+                    {% endif %}
                     <h1 class="card-title pricing-card-title">{{ object.price }}</h1>
-                    <a class="p-2 btn btn-outline-primary" href="{% url 'catalog:product' object.pk %}">Купить</a>
+                    <a class="p-2 btn btn-outline-primary mb-3" href="{% url 'catalog:product' object.pk %}">Купить</a>
+                    <a class="p-2 btn btn-outline-primary mb-3" href="{% url 'catalog:product_update' object.pk %}">Редактировать</a>
+                    <a class="p-2 btn btn-outline-primary mb-3" href="{% url 'catalog:product_delete' object.pk %}">Удалить</a>
                 </div>
             </div>
         </div>
@@ -29,4 +45,4 @@
     </div>
 </div>
 
-    {% endblock %}
+{% endblock %}
