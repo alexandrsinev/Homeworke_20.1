@@ -24,16 +24,20 @@ class ProductForm(StileFormMixin, forms.ModelForm):
     def clean_name(self):
         cleaned_data = self.cleaned_data['name']
 
-        if cleaned_data.lower() in self.bad_words:
-            raise forms.ValidationError(f'Слов {self.bad_words} не должно быть в названии продукта')
+        for word in self.bad_words:
+
+            if word in cleaned_data.lower():
+                raise forms.ValidationError(f'Слов {self.bad_words} не должно быть в названии продукта')
 
         return cleaned_data
 
     def clean_description(self):
         cleaned_data = self.cleaned_data['description']
 
-        if cleaned_data.lower() in self.bad_words:
-            raise forms.ValidationError(f'Слов {self.bad_words} не должно быть в описании продукта')
+        for word in self.bad_words:
+
+            if word in cleaned_data.lower():
+                raise forms.ValidationError(f'Слов {self.bad_words} не должно быть в названии продукта')
 
         return cleaned_data
 
