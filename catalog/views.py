@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -9,10 +10,17 @@ from catalog.forms import ProductForm, VersionForm
 from catalog.models import Product, Version
 
 
-class ProductCreate(CreateView):
+class ProductCreate(CreateView, LoginRequiredMixin):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('catalog:home_page')
+
+    def form_valid(self, form):
+        product = form.save()
+        user = self.request.user
+        product.who_added = user
+        product.save()
+        return super().form_valid(form)
 
 
 class ProductDelete(DeleteView):
