@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class Articles(models.Model):
     title = models.CharField(max_length=250, verbose_name='Заголовок')
@@ -10,6 +12,7 @@ class Articles(models.Model):
     published_at = models.DateTimeField(verbose_name='Дата публикации', auto_now=True)
     is_published = models.BooleanField(default=True, verbose_name='опубликовано')
     views_count = models.IntegerField(default=0, verbose_name='просмотры')
+    published_by_whom = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -17,3 +20,6 @@ class Articles(models.Model):
     class Meta:
         verbose_name = 'запись'
         verbose_name_plural = 'записи'
+        permissions = [
+            ("can_cancel_publication", "Can cancel publication")
+        ]
