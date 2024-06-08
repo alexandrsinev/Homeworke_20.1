@@ -42,7 +42,7 @@
                     <h4 class="card-title pricing-card-title">Цена отсутствует</h4>
                     {% endif %}
                     <a class="p-2 btn btn-outline-primary mb-3" href="{% url 'catalog:product' object.pk %}">Купить</a>
-                    {% if perms.catalog.can_change_description_product or user == object.who_added %}
+                    {% if perms.catalog.can_change_description_product and perms.catalog.can_change_description_product or user == object.who_added %}
                     <a class="p-2 btn btn-outline-primary mb-3" href="{% url 'catalog:product_update' object.pk %}">Редактировать</a>
                     <a class="p-2 btn btn-outline-primary mb-3" href="{% url 'catalog:product_delete' object.pk %}">Удалить</a>
                     {% endif %}
