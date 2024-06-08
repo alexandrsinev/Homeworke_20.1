@@ -6,7 +6,7 @@
         <a class="btn btn-outline-primary my-0 mr-md-auto" href="{% url 'blog:update' object.pk %}">Редактировать
             статью</a>
         <a class="btn btn-outline-danger my-0 mr-md-auto" href="{% url 'blog:delete' object.pk %}">Удалить</a>
-
+{% if perms.object.can_cancel_publication or user == object.published_by_whom %}
         {% if object.is_published %}
 
         <a class="btn btn-outline-secondary my-0 mr-md-auto" href="{% url 'blog:is_published' object.pk %}">Снять с
@@ -14,7 +14,7 @@
         {% else %}
         <a class="btn btn-outline-success my-0 mr-md-auto"
            href="{% url 'blog:is_published' object.pk %}">Опубликовать</a>
-
+{% endif %}
         {% endif %}
 
     </div>
