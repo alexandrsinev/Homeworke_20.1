@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import BooleanField
 
+from blog.models import Articles
 from catalog.models import Product, Version
 
 
@@ -42,8 +43,14 @@ class ProductForm(StileFormMixin, forms.ModelForm):
         return cleaned_data
 
 
+class ProductModeratorForm(StileFormMixin, forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ('description', 'category')
+
+
+
 class VersionForm(StileFormMixin, forms.ModelForm):
     class Meta:
         model = Version
         fields = '__all__'
-
