@@ -1,4 +1,6 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
@@ -6,13 +8,14 @@ from django.urls import reverse_lazy, reverse
 from django.views import View
 from django.views.generic import ListView, DetailView, TemplateView, CreateView, UpdateView, DeleteView
 
-from catalog.forms import ProductForm, VersionForm
+from catalog.forms import ProductForm, VersionForm, ProductModeratorForm
 from catalog.models import Product, Version
 
 
-class ProductCreate(CreateView, LoginRequiredMixin):
+class ProductCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.add_product'
     success_url = reverse_lazy('catalog:home_page')
 
     def form_valid(self, form):
@@ -23,14 +26,16 @@ class ProductCreate(CreateView, LoginRequiredMixin):
         return super().form_valid(form)
 
 
-class ProductDelete(DeleteView):
+class ProductDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
+    permission_required = 'catalog.delete_product'
     success_url = reverse_lazy('catalog:home_page')
 
 
-class ProductUpdate(UpdateView):
+class ProductUpdate(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
+    permission_required = 'catalog.update_product'
     success_url = reverse_lazy('catalog:home_page')
 
     def get_context_data(self, **kwargs):
@@ -55,6 +60,15 @@ class ProductUpdate(UpdateView):
         else:
             return self.render_to_response(self.get_context_data(form=form, formset=formset))
 
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.who_added:
+            return ProductForm
+        if user.has_perm('catalog.can_change_discription_product') and user.has_perm('catalog.can_chage_category_product'):
+            return ProductModeratorForm
+        raise PermissionDenied
+
+
 
 class ProductListView(ListView):
     model = Product
@@ -67,7 +81,7 @@ class ProductListView(ListView):
         return context_data
 
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, DetailView):
     model = Product
 
     def get_context_data(self, **kwargs):
@@ -78,7 +92,7 @@ class ProductDetailView(DetailView):
         return context_data
 
 
-class ContactView(View):
+class ContactView(LoginRequiredMixin, View):
     model = Product
 
     def post(self, request):
@@ -90,7 +104,6 @@ class ContactView(View):
 
     def get(self, request):
         return render(request, 'catalog/contacts.html')
-
 
 class VersionList(ListView):
     model = Version
