@@ -10,6 +10,7 @@ from django.views.generic import ListView, DetailView, TemplateView, CreateView,
 
 from catalog.forms import ProductForm, VersionForm, ProductModeratorForm
 from catalog.models import Product, Version
+from catalog.services import get_version_from_cache
 
 
 class ProductCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
@@ -64,10 +65,10 @@ class ProductUpdate(LoginRequiredMixin, UpdateView):
         user = self.request.user
         if user == self.object.who_added:
             return ProductForm
-        if user.has_perm('catalog.can_change_discription_product') and user.has_perm('catalog.can_chage_category_product'):
+        if user.has_perm('catalog.can_change_discription_product') and user.has_perm(
+                'catalog.can_chage_category_product'):
             return ProductModeratorForm
         raise PermissionDenied
-
 
 
 class ProductListView(ListView):
@@ -105,11 +106,10 @@ class ContactView(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'catalog/contacts.html')
 
+
 class VersionList(ListView):
     model = Version
     success_url = reverse_lazy('catalog:version_list')
 
     def get_queryset(self, *args, **kwargs):
-        queryset = Version.objects.filter(product=self.kwargs.get('pk'))
-        return queryset
-
+        return get_version_from_cache(self.object.pk)
